@@ -31,3 +31,7 @@ class TestGeneticAlgorithm(unittest.TestCase):
     def recombination(self):
         """Verify recombination occurs at proper split points."""
         pass
+
+
+if __name__ == "__main__":
+    unittest.main()

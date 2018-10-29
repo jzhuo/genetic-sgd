@@ -12,3 +12,8 @@ from keras.layers import Dense, Activation
 class NeuralNetwork:
     def __init__(self, hidden_layer_sizes=[]):
         pass
+
+    def build_architecture():
+        # TODO: 
+        # run through the layers, 
+        # compile the model

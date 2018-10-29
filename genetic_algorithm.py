@@ -4,17 +4,23 @@ This file contains the class that provides the genetic algorithm search.
 
 
 class GeneticAlgorithm:
-    def __init__(self, population_size, sgd_mutation, cases=["mse", "l2"]):
+    def __init__(
+        self, population_size, learning_rate, cases=["mse", "l2"], verbose=1
+    ):
+        """
+        If learning rate is 0, the algorithm is just regular mutation.
+        """
         self.population_size = population_size
-        self.sgd_mutation = sgd_mutation
+        self.learning_rate = learning_rate
         self.population = self.init_population()
         self.cases = cases
+        self.verbose = verbose
         pass
 
     def init_population(self):
         """Init population of NNs according to hyper parameters."""
 
-        # TODO: Init population of NNs
+        # TODO: Init population of NNs to self.population
 
         return [NotImplemented]
 
@@ -27,14 +33,15 @@ class GeneticAlgorithm:
 
     def mutate(self, subset_indices=None):
         """Apply mutation to population, or subset passed."""
-        pop = (
-            self.population[subset_indices]
+        indices = (
+            subset_indices
             if subset_indices is not None
-            else self.population
+            else range(0, len(self.population))
         )
 
         # TODO: mutate the population (or passed, selected subset)
 
+        # reassign pop to self.population
         raise NotImplementedError
 
     def recombine(self, subset_indices=None):
@@ -46,9 +53,13 @@ class GeneticAlgorithm:
         )
 
         # TODO: recombine parents to produce new population of population_size
+        # reassign to self.population
 
         raise NotImplementedError
 
-    def run_algorithm(self):
+    def fit(self, train_x, train_y):
         """Run the algorithm."""
+
+        # TODO: implement the full algorithm here
+
         raise NotImplementedError
