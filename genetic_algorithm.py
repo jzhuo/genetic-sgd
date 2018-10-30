@@ -11,8 +11,8 @@ class GeneticAlgorithm:
         If learning rate is 0, the algorithm is just regular mutation.
         """
         self.population_size = population_size
-        self.learning_rate = learning_rate
         self.population = self.init_population()
+        self.learning_rate = learning_rate
         self.cases = cases
         self.verbose = verbose
         pass
@@ -40,7 +40,6 @@ class GeneticAlgorithm:
         )
 
         # TODO: mutate the population (or passed, selected subset)
-
         # reassign pop to self.population
         raise NotImplementedError
 

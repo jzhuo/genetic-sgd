@@ -12,6 +12,12 @@ def load_dataset(name):
     pass
 
 
+def plot_comparison():
+    import matplotlib.pyplot as plt
+
+    pass
+
+
 def initiallize_ga(args):
     pass
 
@@ -20,7 +26,7 @@ def initiallize_one_nn(args):
     pass
 
 
-def train_on_dataset(estimator):
+def cross_validate_on_dataset(estimator):
     pass
 
 
