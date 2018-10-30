@@ -60,6 +60,6 @@ class GeneticAlgorithm:
     def fit(self, train_x, train_y):
         """Run the algorithm."""
 
-        # TODO: implement the full algorithm here
+        # TODO: implement the full algorithm here dude
 
         raise NotImplementedError
