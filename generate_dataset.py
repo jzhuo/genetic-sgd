@@ -18,19 +18,23 @@ functions = {"ripple": ripple}
 
 
 def generate_inputs(shape):
-    """Shape is (N,D).
+    """
+    Shape is (N,D).
     
     Use np.random.normal()
-    Returns np.array() with .shape = (N,D)."""
-    pass
+    Returns np.array() with .shape = (N,D).
+    """
+    return NotImplemented
 
 
 def calculate_outputs(inputs, func_name):
     """Given (N,D) input, create (N,) outputs)."""
-    Y = np.array()
+    outputs = np.array()
     for inp in inputs:
         y = functions[func_name](inputs)
-    pass
+        outputs.append(y)
+    assert outputs.shape[0] == inputs.shape[0]
+    return outputs
 
 
 if __name__ == "__main__":
