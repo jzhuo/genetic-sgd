@@ -30,11 +30,18 @@ def build_NN(
             bias_initializer=constant(1),
         )
     )
-    model.add(Dense(output_size, input_dim=hidden_layer_size, Activation=None))
+    model.add(
+        Dense(
+            output_size, 
+            input_dim=hidden_layer_size, 
+            Activation=None
+        )
+    )
     optimizer = optimizers.SGD(lr=learning_rate)
+
     if weights is not None:
         model.set_weights(weights)
-    model.compile(optimizer=optimizer, loss="mse")
-    return model
-    
 
+    model.compile(optimizer=optimizer, loss="mse")
+
+    return model
