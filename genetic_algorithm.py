@@ -8,6 +8,7 @@ class GeneticAlgorithm:
     def __init__(
         self,
         population_size,
+        selection_size,
         learning_rate,
         epochs,
         generations,
@@ -18,6 +19,7 @@ class GeneticAlgorithm:
         If learning rate is 0, the algorithm is just regular mutation.
         """
         self.population_size = population_size
+        self.selection_size = selection_size
         self.learning_rate = learning_rate
         self.cases = cases
         self.epochs = epochs
@@ -42,13 +44,8 @@ class GeneticAlgorithm:
 
         raise NotImplementedError
 
-    def mutate(self, subset_indices=None):
+    def mutate(self):
         """Apply mutation to population, or subset passed."""
-        indices = (
-            subset_indices
-            if subset_indices is not None
-            else range(0, len(self.population))
-        )
         # TODO: mutate the population (or passed, selected subset)
         # reassign pop to self.population
 
@@ -57,13 +54,8 @@ class GeneticAlgorithm:
 
         raise NotImplementedError
 
-    def recombine(self, subset_indices=None):
+    def recombine(self):
         """Recombine the passed subset of the population."""
-        parents = (
-            self.population[subset_indices]
-            if subset_indices is not None
-            else self.population
-        )
 
         # TODO: recombine parents to produce new population of population_size
         # NOTE: model.get_weights() gives list of matrices
