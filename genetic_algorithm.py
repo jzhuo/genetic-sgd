@@ -1,6 +1,7 @@
 """
 This file contains the class that provides the genetic algorithm search. 
 """
+import neural_network
 
 
 class GeneticAlgorithm:
@@ -29,7 +30,8 @@ class GeneticAlgorithm:
     def init_population(self):
         """Init population of NNs according to hyper parameters."""
 
-        # TODO: Init population of NNs to self.population
+        # TODO: Init population of NNs and return
+        # use neural_network.build_NN()
 
         return [NotImplemented]
 
