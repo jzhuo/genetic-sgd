@@ -10,7 +10,9 @@ from keras.initializers import constant
 from keras import optimizers
 
 
-def build_NN(input_size, hidden_layer_size, output_size, learning_rate):
+def build_NN(
+    input_size, hidden_layer_size, output_size, learning_rate, weights=None
+):
     """Build single hidden layer network in Keras and return it."""
     model = Sequential()
     model.add(Dense(input_size, Activation=None, bias_initializer=constant(1)))
@@ -24,7 +26,8 @@ def build_NN(input_size, hidden_layer_size, output_size, learning_rate):
     )
     model.add(Dense(output_size, input_dim=hidden_layer_size, Activation=None))
     optimizer = optimizers.SGD(lr=learning_rate)
-
+    if weights is not None:
+        model.set_weights(weights)
     model.compile(optimizer=optimizer, loss="mse")
     return model
 
