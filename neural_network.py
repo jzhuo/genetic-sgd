@@ -10,10 +10,9 @@ from keras.initializers import constant
 from keras import optimizers
 
 
-def build_NN(
-    input_size, hidden_layer_size, output_size, learning_rate, weights=None
-):
+def build_NN(input_size, hidden_layer_size, output_size, learning_rate, weights=None):
     """Build single hidden layer network in Keras and return it."""
+    
     model = Sequential()
     model.add(
         Dense(
