@@ -38,9 +38,12 @@ class GeneticAlgorithm:
             if subset_indices is not None
             else range(0, len(self.population))
         )
-
         # TODO: mutate the population (or passed, selected subset)
         # reassign pop to self.population
+
+        # NOTE: model.get_weights() gives list of matrices
+        # NOTE: model.set_weights(weights) assigns the passed weights
+
         raise NotImplementedError
 
     def recombine(self, subset_indices=None):
@@ -52,6 +55,8 @@ class GeneticAlgorithm:
         )
 
         # TODO: recombine parents to produce new population of population_size
+        # NOTE: model.get_weights() gives list of matrices
+        # NOTE: model.set_weights(weights) assigns the passed weights
         # reassign to self.population
 
         raise NotImplementedError
