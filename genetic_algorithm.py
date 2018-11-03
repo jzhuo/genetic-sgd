@@ -5,7 +5,13 @@ This file contains the class that provides the genetic algorithm search.
 
 class GeneticAlgorithm:
     def __init__(
-        self, population_size, learning_rate, cases=["mse", "l2"], verbose=1
+        self,
+        population_size,
+        learning_rate,
+        epochs,
+        generations,
+        cases=["mse", "l2"],
+        verbose=1,
     ):
         """
         If learning rate is 0, the algorithm is just regular mutation.
@@ -13,7 +19,10 @@ class GeneticAlgorithm:
         self.population_size = population_size
         self.learning_rate = learning_rate
         self.cases = cases
+        self.epochs = epochs
+        self.generations = generations
         self.verbose = verbose
+        self.best_model = None
         self.population = self.init_population()
         pass
 
