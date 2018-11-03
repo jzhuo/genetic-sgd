@@ -17,6 +17,12 @@ class GeneticAlgorithm:
     ):
         """
         If learning rate is 0, the algorithm is just regular mutation.
+
+        Cases can include:
+        *  mse
+        *  run time
+        *  l2 norm of weights
+        *  l1 norm of weights
         """
         self.population_size = population_size
         self.selection_size = selection_size
@@ -46,8 +52,9 @@ class GeneticAlgorithm:
 
     def mutate(self):
         """Apply mutation to population, or subset passed."""
-        # TODO: mutate the population (or passed, selected subset)
-        # reassign pop to self.population
+        # TODO: mutate the population
+
+        # do SGD or a standard mutation of random add/subs from weights
 
         # NOTE: model.get_weights() gives list of matrices
         # NOTE: model.set_weights(weights) assigns the passed weights
