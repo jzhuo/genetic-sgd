@@ -15,12 +15,18 @@ def build_NN(
 ):
     """Build single hidden layer network in Keras and return it."""
     model = Sequential()
-    model.add(Dense(input_size, Activation=None, bias_initializer=constant(1)))
+    model.add(
+        Dense(
+            input_size,
+            Activation=None,
+            bias_initializer=constant(1),
+        )
+    )
     model.add(
         Dense(
             hidden_layer_size,
             input_dim=input_size,
-            Activation="tanh",
+            Activation='tanh',
             bias_initializer=constant(1),
         )
     )
@@ -30,7 +36,5 @@ def build_NN(
         model.set_weights(weights)
     model.compile(optimizer=optimizer, loss="mse")
     return model
+    
 
-
-def get_weights(model):
-    return model.get_weights()
