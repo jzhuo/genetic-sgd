@@ -11,10 +11,10 @@ class GeneticAlgorithm:
         If learning rate is 0, the algorithm is just regular mutation.
         """
         self.population_size = population_size
-        self.population = self.init_population()
         self.learning_rate = learning_rate
         self.cases = cases
         self.verbose = verbose
+        self.population = self.init_population()
         pass
 
     def init_population(self):
