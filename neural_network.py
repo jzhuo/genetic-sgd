@@ -16,7 +16,13 @@ def build_NN(
     """Build single hidden layer network in Keras and return it."""
 
     model = Sequential()
-    model.add(Dense(input_size, Activation=None, bias_initializer=constant(1)))
+    model.add(
+        Dense(
+            input_size, 
+            Activation=None, 
+            bias_initializer=constant(1)
+        )
+    )
     model.add(
         Dense(
             hidden_layer_size,
@@ -25,7 +31,14 @@ def build_NN(
             bias_initializer=constant(1),
         )
     )
-    model.add(Dense(output_size, input_dim=hidden_layer_size, Activation=None))
+    model.add(
+        Dense(
+            output_size, 
+            input_dim=hidden_layer_size, 
+            Activation=None
+        )
+    )
+    
     optimizer = optimizers.SGD(lr=learning_rate)
 
     if weights is not None:
