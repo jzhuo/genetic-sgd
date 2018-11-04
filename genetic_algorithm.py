@@ -43,7 +43,7 @@ class GeneticAlgorithm:
         hidden_size = 7 # assuming we will keep this the same size as input layer
         output_size = 1 # y value from data set?
 
-        population = [] 
+        population = []
 
         for i in self.population_size:
             population.append(neural_network.build_NN(sample_size, hidden_size, output_size, self.learning_rate))
