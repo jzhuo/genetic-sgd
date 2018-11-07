@@ -7,6 +7,9 @@ import neural_network
 class GeneticAlgorithm:
     def __init__(
         self,
+        expected_input_size,
+        expected_hidden_size,
+        expected_output_size,
         population_size, 
         selection_size,
         learning_rate,
@@ -24,6 +27,9 @@ class GeneticAlgorithm:
         *  l2 norm of weights
         *  l1 norm of weights
         """
+        self.expected_input_size = expected_input_size
+        self.expected_hidden_size = expected_hidden_size
+        self.expected_output_size = expected_output_size
         self.population_size = population_size
         self.selection_size = selection_size # confused about the difference between this and pop size
         self.learning_rate = learning_rate
@@ -32,23 +38,22 @@ class GeneticAlgorithm:
         self.generations = generations
         self.verbose = verbose
         self.best_model = None
-        self.population = self.init_population()
+        self.population = []
+        self.init_population()
         pass
 
     def init_population(self):
         """Init population of NNs according to hyper parameters."""
 
-        # TODO: retrieve net size from data file
-        sample_size = 7 # x values from data set
-        hidden_size = 7 # assuming we will keep this the same size as input layer
-        output_size = 1 # y value from data set?
+        self.population = []
 
-        population = []
-
-        for i in self.population_size:
-            population.append(neural_network.build_NN(sample_size, hidden_size, output_size, self.learning_rate))
-
-        return population
+        for _ in self.population_size:
+            self.population.append(neural_network.build_NN(
+                self.expected_input_size, 
+                self.expected_hidden_size, 
+                self.expected_output_size, 
+                self.learning_rate
+            ))
 
     def select(self):
         """Using cases, apply lexicase selection to population."""

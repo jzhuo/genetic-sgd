@@ -13,8 +13,12 @@ def ripple(inputs):
     x, y = inputs
     return np.sin(10 * (x ** 2 + y ** 2)) / 10
 
+def uball(inputs):
+    X, y = inputs
+    return 10 / (5 + np.sum(np.square(np.subtract(X, 3))))
 
-functions = {"ripple": ripple}
+
+functions = {"ripple": ripple, "uball": uball}
 
 
 def generate_inputs(shape):
