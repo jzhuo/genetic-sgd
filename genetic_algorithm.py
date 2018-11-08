@@ -7,6 +7,7 @@ import neural_network
 class GeneticAlgorithm:
     def __init__(
         self,
+        hybrid,
         expected_input_size,
         expected_hidden_size,
         expected_output_size,
@@ -27,11 +28,12 @@ class GeneticAlgorithm:
         *  l2 norm of weights
         *  l1 norm of weights
         """
+        self.hybrid = hybrid
         self.expected_input_size = expected_input_size
         self.expected_hidden_size = expected_hidden_size
         self.expected_output_size = expected_output_size
         self.population_size = population_size
-        self.selection_size = selection_size # confused about the difference between this and pop size
+        self.selection_size = selection_size
         self.learning_rate = learning_rate
         self.cases = cases
         self.epochs = epochs
