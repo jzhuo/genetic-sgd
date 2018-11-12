@@ -7,6 +7,7 @@ This repo contains the implementations of the GLSGDO algorithm used in the optim
 Make a virtualenv to install the packages in.
 
 ## Installing
+
 ### Create conda environment
 ```
 conda create -n hamp python=3.6
