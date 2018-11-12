@@ -11,7 +11,7 @@ class GeneticAlgorithm:
         expected_input_size,
         expected_hidden_size,
         expected_output_size,
-        population_size, 
+        population_size,
         selection_size,
         learning_rate,
         epochs,
@@ -50,12 +50,14 @@ class GeneticAlgorithm:
         self.population = []
 
         for _ in self.population_size:
-            self.population.append(neural_network.build_NN(
-                self.expected_input_size, 
-                self.expected_hidden_size, 
-                self.expected_output_size, 
-                self.learning_rate
-            ))
+            self.population.append(
+                neural_network.build_NN(
+                    self.expected_input_size,
+                    self.expected_hidden_size,
+                    self.expected_output_size,
+                    self.learning_rate,
+                )
+            )
 
     def select(self):
         """Using cases, apply lexicase selection to population."""
@@ -90,4 +92,10 @@ class GeneticAlgorithm:
 
         # TODO: implement the full algorithm here
 
+        raise NotImplementedError
+
+    def get_params(self):
+        return NotImplemented
+
+    def set_params(self, **params):
         raise NotImplementedError
