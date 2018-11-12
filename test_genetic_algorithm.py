@@ -4,7 +4,7 @@ from genetic_algorithm import GeneticAlgorithm
 
 
 class TestGeneticAlgorithm(unittest.TestCase):
-    def __init__(self):
+    def setUp(self):
         # initializing variables for self.ga
         self.expected_input_size = 2
         self.expected_hidden_size = 5
@@ -37,19 +37,20 @@ class TestGeneticAlgorithm(unittest.TestCase):
             self.epochs,
             self.generations,
         )
+        pass
 
-    def population_init(self):
+    def test_population_init(self):
         """Verify ga.population is initialized properly."""
         self.assertEqual(self.population_size, len(self.ga.population))
         pass
 
-    def lexicase_selection(self):
+    def test_lexicase_selection(self):
         """Verify lexicase selection on cases occurs properly."""
         self.ga.select()
         self.assertEqual(self.selection_size, len(self.ga.population))
         pass
 
-    def mutation(self):
+    def test_mutation(self):
         """Verify that mutation changes weights."""
         for index in range(len(self.ga.population)):
             prev_weights = self.ga.population[index].get_weights()
@@ -59,7 +60,7 @@ class TestGeneticAlgorithm(unittest.TestCase):
             )
         pass
 
-    def recombination(self):
+    def test_recombination(self):
         """Verify recombination occurs at proper split points."""
         self.assertEqual(self.selection_size, len(self.ga.population))
         # sum of weights calculated from first
