@@ -2,15 +2,16 @@
 This file contains the class that provides the genetic algorithm search. 
 """
 import neural_network
+import numpy as np
 
 
 class GeneticAlgorithm:
     def __init__(
         self,
         hybrid,
-        expected_input_size,
-        expected_hidden_size,
-        expected_output_size,
+        input_size,
+        hidden_layer_size,
+        output_size,
         population_size,
         selection_size,
         learning_rate,
@@ -29,9 +30,9 @@ class GeneticAlgorithm:
         *  l1 norm of weights
         """
         self.hybrid = hybrid
-        self.expected_input_size = expected_input_size
-        self.expected_hidden_size = expected_hidden_size
-        self.expected_output_size = expected_output_size
+        self.input_size = input_size
+        self.hidden_layer_size = hidden_layer_size
+        self.output_size = output_size
         self.population_size = population_size
         self.selection_size = selection_size
         self.learning_rate = learning_rate
@@ -41,7 +42,6 @@ class GeneticAlgorithm:
         self.verbose = verbose
         self.best_model = None
         self.population = []
-        self.init_population()
         pass
 
     def init_population(self):
@@ -51,31 +51,62 @@ class GeneticAlgorithm:
 
         for _ in self.population_size:
             self.population.append(
-                neural_network.build_NN(
-                    self.expected_input_size,
-                    self.expected_hidden_size,
-                    self.expected_output_size,
+                neural_network.build_nn(
+                    self.input_size,
+                    self.hidden_layer_size,
+                    self.output_size,
                     self.learning_rate,
                 )
             )
 
-    def select(self):
+    def select(self, test_x, test_y):
         """Using cases, apply lexicase selection to population."""
-
         # TODO: Modify self.population according to lexicase args
+        def check_case(case, estimator):
+            """Return score for estimator on case."""
+            if case == "mse":
+                # predict y_hat using test_x
+                y_hat = estimator.predict(test_x)
+                # compute a diff with test_y and y_hat
+                mse = (test_x - y_hat) ** 2
+                return mse
+            elif case == "l2":
+                pass
 
-        raise NotImplementedError
+        selected = []
+        num_cases = len(self.cases)
+        num_to_select_per_case = (
+            self.selection_size - self.selection_size % num_cases
+        ) / num_cases
 
-    def mutate(self):
+        for case in self.cases:
+            best = []
+            for estimator in self.population:
+                score = check_case(case, estimator)
+                best.append((score, estimator))
+            best.sort(key=lambda x: x[0])  # robust
+            selected += best[:num_to_select_per_case]
+
+        models_to_keep = [tup[1] for tup in selected]
+        self.population = models_to_keep
+
+    def mutate(self, train_x, train_y):
         """Apply mutation to population, or subset passed."""
-        # TODO: mutate the population
-
         # do SGD or a standard mutation of random add/subs from weights
-
-        # NOTE: model.get_weights() gives list of matrices
-        # NOTE: model.set_weights(weights) assigns the passed weights
-
-        raise NotImplementedError
+        for estimator in self.population:
+            if self.hybrid:
+                estimator.fit(train_x, train_y, epochs=self.epochs)
+            else:
+                # NOTE: model.get_weights() gives list of matrices
+                # NOTE: model.set_weights(weights) assigns the passed weights
+                weights = estimator.get_weights()
+                # BUG: assuming mutable
+                for matrix in weights:
+                    noise = np.random.normal(
+                        loc=0.0, scale=1.0, size=matrix.shape
+                    )
+                    matrix += noise
+                estimator.set_weights(weights)
 
     def recombine(self):
         """Recombine the passed subset of the population."""
@@ -84,18 +115,65 @@ class GeneticAlgorithm:
         # NOTE: model.get_weights() gives list of matrices
         # NOTE: model.set_weights(weights) assigns the passed weights
         # reassign to self.population
+        children = []
+        num_parents = len(self.population)
+        for _ in range(self.population_size):
+            first, second = np.random.randint(0, num_parents, 2)
+            left = self.population[first]
+            right = self.population[second]
+            left = left.get_weights()
+            right = right.get_weights()
+            child = []
+            for matrix in [0, 1]:  # hardcoding 1 hidden layer
+                height = left[matrix].shape[0]
+                # how many rows come from left
+                split = np.random.uniform(0, height)
+                # randomly select rows
+                indices = np.random.choice(height, split, replace=False)
+                child_matrix = []
+                for row in range(height):
+                    if row in indices:
+                        child_matrix.append(left[row])
+                    else:
+                        child_matrix.append(right[row])
+                child.append(child_matrix)
+            children.append(child)
 
-        raise NotImplementedError
+        new_population = []
+        for weights in children:
+            new_population.append(
+                neural_network.build_nn(
+                    self.input_size,
+                    self.hidden_layer_size,
+                    self.output_size,
+                    self.learning_rate,
+                    weights=weights,
+                )
+            )
+        self.population = new_population
 
     def fit(self, train_x, train_y, test_x=None, test_y=None):
         """Run the algorithm."""
-
         # TODO: implement the full algorithm here
-
-        raise NotImplementedError
+        # init population of N networks, run = 0
+        #     do
+        #     evaluate all N networks
+        #     select the K best parents using Lexicase
+        #     run SGD as mutation on selected parents
+        #     save parent with lowest validation error
+        #     recombine to produce N new network
+        #         while run < generation limit
+        #     return best saved
+        self.init_population()
+        for _ in range(self.generations):
+            self.select(test_x, test_y)
+            self.mutate(train_x, train_y)
+            self.recombine()
 
     def get_params(self):
+        """Return the params dictionary."""
         return NotImplemented
 
     def set_params(self, **params):
+        """Set params dictionary."""
         raise NotImplementedError

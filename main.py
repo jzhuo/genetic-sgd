@@ -7,9 +7,12 @@ It should contain functions that
 * Train on the dataset
 """
 
+import pandas as pd
+
 
 def load_dataset(name):
-    pass
+    frame = pd.read_csv(name, index_col=0)
+    return frame
 
 
 def plot_comparison():

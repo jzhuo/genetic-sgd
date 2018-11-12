@@ -1,3 +1,4 @@
 data/*
 .vscode/settings.json
 .vscode
+*.cpython-36.pyc
