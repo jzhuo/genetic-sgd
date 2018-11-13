@@ -9,6 +9,8 @@ It should contain functions that
 
 import pandas as pd
 
+SEED = 42
+
 
 def load_dataset(name):
     frame = pd.read_csv(name, index_col=0)

@@ -61,7 +61,7 @@ class GeneticAlgorithm:
 
     def select(self, test_x, test_y):
         """Using cases, apply lexicase selection to population."""
-        # TODO: Modify self.population according to lexicase args
+
         def check_case(case, estimator):
             """Return score for estimator on case."""
             if case == "mse":
@@ -92,13 +92,10 @@ class GeneticAlgorithm:
 
     def mutate(self, train_x, train_y):
         """Apply mutation to population, or subset passed."""
-        # do SGD or a standard mutation of random add/subs from weights
         for estimator in self.population:
             if self.hybrid:
                 estimator.fit(train_x, train_y, epochs=self.epochs)
             else:
-                # NOTE: model.get_weights() gives list of matrices
-                # NOTE: model.set_weights(weights) assigns the passed weights
                 weights = estimator.get_weights()
                 # BUG: assuming mutable
                 for matrix in weights:
@@ -110,11 +107,6 @@ class GeneticAlgorithm:
 
     def recombine(self):
         """Recombine the passed subset of the population."""
-
-        # TODO: recombine parents to produce new population of population_size
-        # NOTE: model.get_weights() gives list of matrices
-        # NOTE: model.set_weights(weights) assigns the passed weights
-        # reassign to self.population
         children = []
         num_parents = len(self.population)
         for _ in range(self.population_size):
@@ -154,7 +146,6 @@ class GeneticAlgorithm:
 
     def fit(self, train_x, train_y, test_x=None, test_y=None):
         """Run the algorithm."""
-        # TODO: implement the full algorithm here
         # init population of N networks, run = 0
         #     do
         #     evaluate all N networks
@@ -172,8 +163,35 @@ class GeneticAlgorithm:
 
     def get_params(self):
         """Return the params dictionary."""
-        return NotImplemented
+        params = {
+            "hybrid": self.hybrid,
+            "input_size": self.input_size,
+            "hidden_layer_size": self.hidden_layer_size,
+            "output_size": self.output_size,
+            "population_size": self.population_size,
+            "selection_size": self.selection_size,
+            "learning_rate": self.learning_rate,
+            "cases": self.cases,
+            "epochs": self.epochs,
+            "generations": self.generations,
+            "verbose": self.verbose,
+            "best_model": self.best_model,
+            "population": self.population,
+        }
+        return params
 
     def set_params(self, **params):
         """Set params dictionary."""
-        raise NotImplementedError
+        self.hybrid = params["hybrid"]
+        self.input_size = params["input_size"]
+        self.hidden_layer_size = params["hidden_layer_size"]
+        self.output_size = params["output_size"]
+        self.population_size = params["population_size"]
+        self.selection_size = params["selection_size"]
+        self.learning_rate = params["learning_rate"]
+        self.cases = params["cases"]
+        self.epochs = params["epochs"]
+        self.generations = params["generations"]
+        self.verbose = params["verbose"]
+        self.best_model = params["best_model"]
+        self.population = params["population"]
