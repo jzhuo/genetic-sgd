@@ -68,10 +68,12 @@ class GeneticAlgorithm:
                 # predict y_hat using test_x
                 y_hat = estimator.predict(test_x)
                 # compute a diff with test_y and y_hat
-                mse = (test_x - y_hat) ** 2
+                mse = (test_y - y_hat) ** 2
                 return mse
             elif case == "l2":
-                pass
+                w1, w2 = estimator.get_weights()
+                l2 = np.linalg.norm(w1) + np.linalg.norm(w2)
+                return l2
 
         selected = []
         num_cases = len(self.cases)
@@ -99,9 +101,7 @@ class GeneticAlgorithm:
                 weights = estimator.get_weights()
                 # BUG: assuming mutable
                 for matrix in weights:
-                    noise = np.random.normal(
-                        loc=0.0, scale=1.0, size=matrix.shape
-                    )
+                    noise = np.random.normal(loc=0.0, scale=1.0, size=matrix.shape)
                     matrix += noise
                 estimator.set_weights(weights)
 
