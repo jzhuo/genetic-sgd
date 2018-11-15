@@ -101,7 +101,9 @@ class GeneticAlgorithm:
                 weights = estimator.get_weights()
                 # BUG: assuming mutable
                 for matrix in weights:
-                    noise = np.random.normal(loc=0.0, scale=1.0, size=matrix.shape)
+                    noise = np.random.normal(
+                        loc=0.0, scale=1.0, size=matrix.shape
+                    )
                     matrix += noise
                 estimator.set_weights(weights)
 

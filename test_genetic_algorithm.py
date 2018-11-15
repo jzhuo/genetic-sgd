@@ -78,6 +78,9 @@ class TestGeneticAlgorithm(unittest.TestCase):
             self.assertEqual(weight_sum, new_weight_sum)
         pass
 
+    # TODO add sklearn BaseEstimator test
+    # (see if it conforms to the duck-typing)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -31,9 +31,14 @@ def initiallize_one_nn(args):
     pass
 
 
-def cross_validate_on_dataset(estimator):
+def cross_validate_on_dataset(estimator, data):
+    from sklearn.model_selection import cross_val_score, GridSearchCV
+
     pass
 
 
 if __name__ == "__main__":
+    # load data
+    # init ga
+    # pass to cross validate
     pass
