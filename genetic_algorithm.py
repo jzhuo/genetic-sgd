@@ -72,6 +72,7 @@ class GeneticAlgorithm:
                 return mse
             elif case == "l2":
                 w1, w2 = estimator.get_weights()
+                # compute l2 norm with the weight matricies
                 l2 = np.linalg.norm(w1) + np.linalg.norm(w2)
                 return l2
 
@@ -101,9 +102,7 @@ class GeneticAlgorithm:
                 weights = estimator.get_weights()
                 # BUG: assuming mutable
                 for matrix in weights:
-                    noise = np.random.normal(
-                        loc=0.0, scale=1.0, size=matrix.shape
-                    )
+                    noise = np.random.normal(loc=0.0, scale=1.0, size=matrix.shape)
                     matrix += noise
                 estimator.set_weights(weights)
 
