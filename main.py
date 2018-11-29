@@ -23,11 +23,14 @@ def plot_comparison():
     pass
 
 
-def initiallize_ga(args):
+def initialize_ga(hybrid, input_size, hidden_layer_size, output_size):
+    from genetic_algorithm import GeneticAlgorithm
+
+    GeneticAlgorithm(hybrid, input_size)
     pass
 
 
-def initiallize_one_nn(args):
+def initiallize_one_nn(input_size):
     pass
 
 
@@ -39,6 +42,9 @@ def cross_validate_on_dataset(estimator, data):
 
 if __name__ == "__main__":
     # load data
+    data = load_dataset("data/ripple_0.0_50_200")
     # init ga
+    input_size = data.shape[1] - 1
+    output_size = 1
     # pass to cross validate
     pass
