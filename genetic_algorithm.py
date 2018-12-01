@@ -42,6 +42,7 @@ class GeneticAlgorithm:
         self.verbose = verbose
         self.best_model = None
         self.population = []
+        self.init_population()
         pass
 
     def init_population(self):
@@ -49,7 +50,7 @@ class GeneticAlgorithm:
 
         self.population = []
 
-        for _ in self.population_size:
+        for _ in range(self.population_size):
             self.population.append(
                 neural_network.build_nn(
                     self.input_size,
@@ -57,6 +58,12 @@ class GeneticAlgorithm:
                     self.output_size,
                     self.learning_rate,
                 )
+                # neural_network.build_sklearn_nn(
+                #     self.input_size,
+                #     self.hidden_layer_size,
+                #     self.output_size,
+                #     self.learning_rate,
+                # )
             )
 
     def select(self, test_x, test_y):
@@ -70,33 +77,42 @@ class GeneticAlgorithm:
                 # compute a diff with test_y and y_hat
                 mse = (test_y - y_hat) ** 2
                 return mse
-            elif case == "l2":
-                w1, w2 = estimator.get_weights()
-                # compute l2 norm with the weight matricies
-                l2 = np.linalg.norm(w1, ord=2) + np.linalg.norm(w2, ord=2)
-                return l2
             elif case == "l1":
                 w1, w2 = estimator.get_weights()
                 # compute l2 norm with the weight matricies
                 l2 = np.linalg.norm(w1, ord=1) + np.linalg.norm(w2, ord=1)
                 return l2
+            elif case == "l2":
+                print(np.array(estimator.get_weights()).shape)
+                w1, w2 = estimator.get_weights()
+                # compute l2 norm with the weight matricies
+
+                l2 = np.linalg.norm(w1, ord=2) + np.linalg.norm(w2, ord=2)
+                return l2
+            elif case == "time":
+                return float("inf")
 
         selected = []
-        num_cases = len(self.cases)
-        num_to_select_per_case = (
-            self.selection_size - self.selection_size % num_cases
-        ) / num_cases
-
-        for case in self.cases:
-            best = []
-            for estimator in self.population:
-                score = check_case(case, estimator)
-                best.append((score, estimator))
-            best.sort(key=lambda x: x[0])  # robust
-            selected += best[:num_to_select_per_case]
-
-        models_to_keep = [tup[1] for tup in selected]
-        self.population = models_to_keep
+        while len(selected) < self.selection_size:
+            pool = set(self.population) - set(selected)
+            num_cases = len(self.cases)
+            # num_to_select_per_case = (
+            #     self.selection_size - self.selection_size % num_cases
+            # ) / num_cases
+            case_bests = []  # to randomly pick from later
+            for case in self.cases:
+                best = {}
+                for estimator in pool:
+                    score = check_case(case, estimator)
+                    best[str(score)] = estimator
+                print(best)
+                # best.sort(key=(lambda x: x[0]))  # robust
+                key = sorted(best.keys())[0]
+                case_bests.append(best[key])
+            random_pick = np.random.randint(0, len(case_bests))
+            selected.append(case_bests[random_pick])
+        self.population = selected
+        # now recombine
 
     def mutate(self, train_x, train_y):
         """Apply mutation to population, or subset passed."""
@@ -152,7 +168,7 @@ class GeneticAlgorithm:
             )
         self.population = new_population
 
-    def fit(self, train_x, train_y, test_x=None, test_y=None):
+    def fit(self, train_x, train_y):
         """Run the algorithm."""
         # init population of N networks, run = 0
         #     do
@@ -163,13 +179,33 @@ class GeneticAlgorithm:
         #     recombine to produce N new network
         #         while run < generation limit
         #     return best saved
+        height = train_x.shape[0]
+        print(height)
+        split = int(np.ceil(height / 5))
+        indices = np.random.choice(height, split, replace=False)
+        test_x, test_y, X, y = [], [], [], []
+        for row in range(height):
+            if row in indices:  # in test set
+                test_x.append(train_x[row])
+                test_y.append(train_y[row])
+            else:  # in train set
+                X.append(train_x[row])
+                y.append(train_y[row])
+        test_x, test_y, X, y = (
+            np.array(test_x),
+            np.array(test_y),
+            np.array(X),
+            np.array(y),
+        )
+        print(test_x.shape, test_y.shape)
+        print(X.shape, y.shape)
         self.init_population()
         for _ in range(self.generations):
             self.select(test_x, test_y)
-            self.mutate(train_x, train_y)
+            self.mutate(X, y)
             self.recombine()
 
-    def get_params(self):
+    def get_params(self, deep=False):
         """Return the params dictionary."""
         params = {
             "hybrid": self.hybrid,
@@ -183,8 +219,8 @@ class GeneticAlgorithm:
             "epochs": self.epochs,
             "generations": self.generations,
             "verbose": self.verbose,
-            "best_model": self.best_model,
-            "population": self.population,
+            # "best_model": self.best_model,
+            # "population": self.population,
         }
         return params
 
@@ -201,5 +237,43 @@ class GeneticAlgorithm:
         self.epochs = params["epochs"]
         self.generations = params["generations"]
         self.verbose = params["verbose"]
-        self.best_model = params["best_model"]
-        self.population = params["population"]
+        # self.best_model = params["best_model"]
+        # self.population = params["population"]
+        self.best_model = None
+        self.population = []
+        self.init_population()
+
+    def write(self):
+        pass
+
+
+if __name__ == "__main__":
+    import main
+
+    data = main.load_dataset("data/ripple_0.0_50_200")
+    # init ga
+    input_size = data.shape[1] - 1
+    hidden_layer_size = 5
+    output_size = 1
+    population_size = 6
+    selection_size = 2
+    learning_rate = 1e-3
+    epochs = 10
+    generations = 5
+    estimator = GeneticAlgorithm(
+        True,
+        input_size,
+        hidden_layer_size,
+        output_size,
+        population_size,
+        selection_size,
+        learning_rate,
+        epochs,
+        generations,
+    )
+    print(estimator)
+    import pickle
+
+    with open("test", "wb") as f:
+        pickle.dump(estimator, f)
+

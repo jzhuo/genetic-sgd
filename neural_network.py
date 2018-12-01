@@ -5,7 +5,7 @@ There are pros and cons to wrapping sklearn and keras objects.
 """
 
 from keras.models import Sequential
-from keras.layers import Dense, Activation
+from keras.layers import Dense, Activation, Input, Reshape
 from keras.initializers import constant
 from keras import initializers
 from keras import optimizers
@@ -19,7 +19,9 @@ def build_nn(
 
     model = Sequential()
     # input layer
-    model.add(Dense(input_size, Activation=None, bias_initializer=constant(1)))
+    # model.add(Dense(input_size, activation=None, bias_initializer=constant(1)))
+    inputs = Input(shape=(input_size,))
+    model.add(inputs)
     # hidden layer
     # fan-in initialization
     minval = -0.5 / input_size
@@ -27,29 +29,31 @@ def build_nn(
     fan_in_init = initializers.RandomUniform(
         minval=minval, maxval=maxval, seed=main.SEED
     )
-    model.add(
-        Dense(
-            hidden_layer_size,
-            input_dim=input_size,
-            Activation="tanh",
-            bias_initializer=constant(1),
-            kernel_initializer=fan_in_init,
-        )
+    hidden_layer = Dense(
+        hidden_layer_size,
+        input_dim=input_size,
+        output_dim=output_size,
+        activation="tanh",
+        bias_initializer=constant(1),
+        kernel_initializer=fan_in_init,
     )
-    # output layere
+    model.add(hidden_layer)
+    # output layer
     minval = -0.5 / hidden_layer_size
     maxval = 0.5 / hidden_layer_size
     fan_in_init = initializers.RandomUniform(
         minval=minval, maxval=maxval, seed=main.SEED
     )
-    model.add(
-        Dense(
-            output_size,
-            input_dim=hidden_layer_size,
-            kernel_initializer=fan_in_init,
-            Activation=None,
-        )
-    )
+    # model.add(
+    #     Dense(
+    #         output_size,
+    #         input_dim=hidden_layer_size,
+    #         kernel_initializer=fan_in_init,
+    #         activation=None,
+    #     )
+    # )
+    # output_layer = Reshape((1,), input_shape=(hidden_layer_size,))
+    # model.add(output_layer)
 
     optimizer = optimizers.SGD(lr=learning_rate)
 
@@ -57,5 +61,23 @@ def build_nn(
         model.set_weights(weights)
 
     model.compile(optimizer=optimizer, loss="mse")
+
+    return model
+
+
+def build_sklearn_nn(
+    input_size, hidden_layer_size, output_size, learning_rate, weights=None
+):
+    from sklearn.neural_network import MLPRegressor
+
+    model = MLPRegressor(
+        hidden_layer_sizes=(hidden_layer_size,),
+        activation="tanh",
+        solver="sgd",
+        alpha=0.0,
+        batch_size=32,
+        learning_rate="constant",
+        learning_rate_init=learning_rate,
+    )
 
     return model
