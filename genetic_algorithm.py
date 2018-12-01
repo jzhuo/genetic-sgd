@@ -4,6 +4,9 @@ This file contains the class that provides the genetic algorithm search.
 import neural_network
 import numpy as np
 
+W1_INDEX = 0
+W2_INDEX = 2
+
 
 class GeneticAlgorithm:
     def __init__(
@@ -78,13 +81,22 @@ class GeneticAlgorithm:
                 mse = (test_y - y_hat) ** 2
                 return mse
             elif case == "l1":
-                w1, w2 = estimator.get_weights()
+                weights = estimator.get_weights()
+                print("weights", np.array(weights).shape)
+                for w in weights:
+                    print("w", w.shape)
+                w1 = weights[W1_INDEX]
+                w2 = weights[W2_INDEX]
                 # compute l2 norm with the weight matricies
                 l2 = np.linalg.norm(w1, ord=1) + np.linalg.norm(w2, ord=1)
                 return l2
             elif case == "l2":
-                print(np.array(estimator.get_weights()).shape)
-                w1, w2 = estimator.get_weights()
+                weights = estimator.get_weights()
+                print("weights", np.array(weights).shape)
+                for w in weights:
+                    print("w", w.shape)
+                w1 = weights[W1_INDEX]
+                w2 = weights[W2_INDEX]
                 # compute l2 norm with the weight matricies
 
                 l2 = np.linalg.norm(w1, ord=2) + np.linalg.norm(w2, ord=2)
@@ -95,7 +107,7 @@ class GeneticAlgorithm:
         selected = []
         while len(selected) < self.selection_size:
             pool = set(self.population) - set(selected)
-            num_cases = len(self.cases)
+            # num_cases = len(self.cases)
             # num_to_select_per_case = (
             #     self.selection_size - self.selection_size % num_cases
             # ) / num_cases
@@ -140,19 +152,33 @@ class GeneticAlgorithm:
             left = left.get_weights()
             right = right.get_weights()
             child = []
-            for matrix in [0, 1]:  # hardcoding 1 hidden layer
-                height = left[matrix].shape[0]
+            for matrix in range(4):  # hardcoding 1 hidden layer
+                # dealing with weight matrix
+                print(
+                    "matrix shape",
+                    matrix,
+                    left[matrix].shape,
+                    right[matrix].shape,
+                )
+                w_l = left[matrix].T
+                w_r = right[matrix].T
+                height = w_l.shape[0]
+                print("height", height)
+                assert w_l.shape == w_r.shape
                 # how many rows come from left
-                split = np.random.uniform(0, height)
+                split = int(np.random.uniform(0, height))
                 # randomly select rows
                 indices = np.random.choice(height, split, replace=False)
+
                 child_matrix = []
                 for row in range(height):
                     if row in indices:
-                        child_matrix.append(left[row])
+                        child_matrix.append(w_l[row])
                     else:
-                        child_matrix.append(right[row])
+                        child_matrix.append(w_r[row])
+                child_matrix = np.array(child_matrix).T
                 child.append(child_matrix)
+
             children.append(child)
 
         new_population = []

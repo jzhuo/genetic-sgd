@@ -35,12 +35,12 @@ def cross_validate_on_dataset(estimator, data):
     param_grid = {
         "hybrid": [True],
         "input_size": [input_size],
-        "hidden_layer_size": [input_size * index for index in range(1, 5)],
+        "hidden_layer_size": [10],
         "output_size": [1],
-        "population_size": [5, 10],
-        "selection_size": [2, 4],
+        "population_size": [5],
+        "selection_size": [2],
         "learning_rate": [1e-3],
-        "epochs": [10, 20],
+        "epochs": [10],
         "generations": [25],
         "cases": [["mse", "l2", "l1", "time"]],
         "verbose": [1],
@@ -58,7 +58,7 @@ def cross_validate_on_dataset(estimator, data):
 
 if __name__ == "__main__":
     # load data
-    data = load_dataset("data/ripple_0.0_50_200")
+    data = load_dataset("data/uball_0.0_50_200")
     # init ga
     input_size = data.shape[1] - 1
     hidden_layer_size = 5

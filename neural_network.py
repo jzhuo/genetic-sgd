@@ -5,7 +5,7 @@ There are pros and cons to wrapping sklearn and keras objects.
 """
 
 from keras.models import Sequential
-from keras.layers import Dense, Activation, Input, Reshape
+from keras.layers import Dense, Activation, Input
 from keras.initializers import constant
 from keras import initializers
 from keras import optimizers
@@ -20,30 +20,30 @@ def build_nn(
     model = Sequential()
     # input layer
     # model.add(Dense(input_size, activation=None, bias_initializer=constant(1)))
-    inputs = Input(shape=(input_size,))
-    model.add(inputs)
-    # hidden layer
-    # fan-in initialization
-    minval = -0.5 / input_size
-    maxval = 0.5 / input_size
-    fan_in_init = initializers.RandomUniform(
-        minval=minval, maxval=maxval, seed=main.SEED
-    )
-    hidden_layer = Dense(
-        hidden_layer_size,
-        input_dim=input_size,
-        output_dim=output_size,
-        activation="tanh",
-        bias_initializer=constant(1),
-        kernel_initializer=fan_in_init,
-    )
-    model.add(hidden_layer)
-    # output layer
-    minval = -0.5 / hidden_layer_size
-    maxval = 0.5 / hidden_layer_size
-    fan_in_init = initializers.RandomUniform(
-        minval=minval, maxval=maxval, seed=main.SEED
-    )
+    # inputs = Input(shape=(input_size,))
+    # model.add(inputs)
+    # # hidden layer
+    # # fan-in initialization
+    # minval = -0.5 / input_size
+    # maxval = 0.5 / input_size
+    # fan_in_init = initializers.RandomUniform(
+    #     minval=minval, maxval=maxval, seed=main.SEED
+    # )
+    # hidden_layer = Dense(
+    #     hidden_layer_size,
+    #     input_shape=(input_size,),
+    #     # output_dim=output_size,
+    #     activation="tanh",
+    #     bias_initializer=constant(1),
+    #     kernel_initializer=fan_in_init,
+    # )
+    # model.add(hidden_layer)
+    # # output layer
+    # minval = -0.5 / hidden_layer_size
+    # maxval = 0.5 / hidden_layer_size
+    # fan_in_init = initializers.RandomUniform(
+    #     minval=minval, maxval=maxval, seed=main.SEED
+    # )
     # model.add(
     #     Dense(
     #         output_size,
@@ -52,8 +52,14 @@ def build_nn(
     #         activation=None,
     #     )
     # )
-    # output_layer = Reshape((1,), input_shape=(hidden_layer_size,))
-    # model.add(output_layer)
+    # # output_layer = Reshape((1,), input_shape=(hidden_layer_size,))
+    # # model.add(output_layer)
+
+    model.add(
+        Dense(hidden_layer_size, input_dim=input_size, activation="tanh")
+    )
+    # model.add(Dense(hidden_layer_size, activation="tanh"))
+    model.add(Dense(1))
 
     optimizer = optimizers.SGD(lr=learning_rate)
 
@@ -62,6 +68,11 @@ def build_nn(
 
     model.compile(optimizer=optimizer, loss="mse")
 
+    from keras.utils import plot_model
+
+    plot_model(
+        model, to_file="model.png", show_layer_names=True, show_shapes=True
+    )
     return model
 
 
