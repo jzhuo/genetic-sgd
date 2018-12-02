@@ -82,9 +82,6 @@ class GeneticAlgorithm:
                 return mse
             elif case == "l1":
                 weights = estimator.get_weights()
-                print("weights", np.array(weights).shape)
-                for w in weights:
-                    print("w", w.shape)
                 w1 = weights[W1_INDEX]
                 w2 = weights[W2_INDEX]
                 # compute l2 norm with the weight matricies
@@ -92,13 +89,9 @@ class GeneticAlgorithm:
                 return l2
             elif case == "l2":
                 weights = estimator.get_weights()
-                print("weights", np.array(weights).shape)
-                for w in weights:
-                    print("w", w.shape)
                 w1 = weights[W1_INDEX]
                 w2 = weights[W2_INDEX]
                 # compute l2 norm with the weight matricies
-
                 l2 = np.linalg.norm(w1, ord=2) + np.linalg.norm(w2, ord=2)
                 return l2
             elif case == "time":
@@ -107,18 +100,12 @@ class GeneticAlgorithm:
         selected = []
         while len(selected) < self.selection_size:
             pool = set(self.population) - set(selected)
-            # num_cases = len(self.cases)
-            # num_to_select_per_case = (
-            #     self.selection_size - self.selection_size % num_cases
-            # ) / num_cases
             case_bests = []  # to randomly pick from later
             for case in self.cases:
                 best = {}
                 for estimator in pool:
                     score = check_case(case, estimator)
                     best[str(score)] = estimator
-                print(best)
-                # best.sort(key=(lambda x: x[0]))  # robust
                 key = sorted(best.keys())[0]
                 case_bests.append(best[key])
             random_pick = np.random.randint(0, len(case_bests))
@@ -154,16 +141,9 @@ class GeneticAlgorithm:
             child = []
             for matrix in range(4):  # hardcoding 1 hidden layer
                 # dealing with weight matrix
-                print(
-                    "matrix shape",
-                    matrix,
-                    left[matrix].shape,
-                    right[matrix].shape,
-                )
                 w_l = left[matrix].T
                 w_r = right[matrix].T
                 height = w_l.shape[0]
-                print("height", height)
                 assert w_l.shape == w_r.shape
                 # how many rows come from left
                 split = int(np.random.uniform(0, height))

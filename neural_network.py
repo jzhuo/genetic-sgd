@@ -22,44 +22,30 @@ def build_nn(
     # model.add(Dense(input_size, activation=None, bias_initializer=constant(1)))
     # inputs = Input(shape=(input_size,))
     # model.add(inputs)
-    # # hidden layer
-    # # fan-in initialization
-    # minval = -0.5 / input_size
-    # maxval = 0.5 / input_size
-    # fan_in_init = initializers.RandomUniform(
-    #     minval=minval, maxval=maxval, seed=main.SEED
-    # )
-    # hidden_layer = Dense(
-    #     hidden_layer_size,
-    #     input_shape=(input_size,),
-    #     # output_dim=output_size,
-    #     activation="tanh",
-    #     bias_initializer=constant(1),
-    #     kernel_initializer=fan_in_init,
-    # )
-    # model.add(hidden_layer)
-    # # output layer
-    # minval = -0.5 / hidden_layer_size
-    # maxval = 0.5 / hidden_layer_size
-    # fan_in_init = initializers.RandomUniform(
-    #     minval=minval, maxval=maxval, seed=main.SEED
-    # )
-    # model.add(
-    #     Dense(
-    #         output_size,
-    #         input_dim=hidden_layer_size,
-    #         kernel_initializer=fan_in_init,
-    #         activation=None,
-    #     )
-    # )
-    # # output_layer = Reshape((1,), input_shape=(hidden_layer_size,))
-    # # model.add(output_layer)
-
-    model.add(
-        Dense(hidden_layer_size, input_dim=input_size, activation="tanh")
+    # fan-in initialization
+    minval = -0.5 / input_size
+    maxval = 0.5 / input_size
+    fan_in_init = initializers.RandomUniform(
+        minval=minval, maxval=maxval, seed=main.SEED
     )
-    # model.add(Dense(hidden_layer_size, activation="tanh"))
-    model.add(Dense(1))
+    model.add(
+        Dense(
+            hidden_layer_size,
+            input_dim=input_size,
+            activation="tanh",
+            bias_initializer=constant(1),
+            kernel_initializer=fan_in_init,
+        )
+    )
+    # output layer
+    minval = -0.5 / hidden_layer_size
+    maxval = 0.5 / hidden_layer_size
+    fan_in_init = initializers.RandomUniform(
+        minval=minval, maxval=maxval, seed=main.SEED
+    )
+    model.add(
+        Dense(1, bias_initializer=constant(1), kernel_initializer=fan_in_init)
+    )
 
     optimizer = optimizers.SGD(lr=learning_rate)
 
