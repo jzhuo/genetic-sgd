@@ -21,12 +21,14 @@ matplotlib==3.0.1
 mccabe==0.6.1
 numpy==1.15.3
 protobuf==3.6.1
+pydot==1.4.0
 pylint==2.1.1
 pyparsing==2.3.0
 python-dateutil==2.7.5
 PyYAML==3.13
 scikit-learn==0.20.0
 scipy==1.1.0
+setuptools==39.1.0
 six==1.11.0
 sklearn==0.0
 tensorboard==1.11.0

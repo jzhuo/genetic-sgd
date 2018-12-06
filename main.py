@@ -25,6 +25,7 @@ def plot_comparison():
 
 
 def initiallize_one_nn(input_size):
+
     pass
 
 
@@ -43,7 +44,7 @@ def cross_validate_on_dataset(estimator, data):
         "epochs": [10],
         "generations": [25],
         "cases": [["mse", "l2", "l1", "time"]],
-        "verbose": [1],
+        "verbose": [0], # ****** REMEMBER TO TOGGLE VERBOSITY ******
     }
     grid = GridSearchCV(
         estimator, param_grid, scoring="neg_mean_squared_error", cv=5, n_jobs=1

@@ -54,11 +54,11 @@ def build_nn(
 
     model.compile(optimizer=optimizer, loss="mse")
 
-    from keras.utils import plot_model
+    # from keras.utils import plot_model
 
-    plot_model(
-        model, to_file="model.png", show_layer_names=True, show_shapes=True
-    )
+    # plot_model(
+    #     model, to_file="model.png", show_layer_names=True, show_shapes=True
+    # )
     return model
 
 

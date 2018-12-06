@@ -21,7 +21,8 @@ class GeneticAlgorithm:
         epochs,
         generations,
         cases=["mse", "l2", "l1", "time"],
-        verbose=1,
+        # ****** make sure to toggle verbosity during training!! *****
+        verbose=0,
     ):
         """
         If learning rate is 0, the algorithm is just regular mutation.
@@ -44,6 +45,7 @@ class GeneticAlgorithm:
         self.generations = generations
         self.verbose = verbose
         self.best_model = None
+        self.best_mse = float('inf')
         self.population = []
         self.init_population()
         pass
@@ -78,7 +80,11 @@ class GeneticAlgorithm:
                 # predict y_hat using test_x
                 y_hat = estimator.predict(test_x)
                 # compute a diff with test_y and y_hat
-                mse = (test_y - y_hat) ** 2
+                mse = np.mean((test_y - y_hat) ** 2)
+                # updating best model
+                if mse < self.best_mse:
+                    self.best_model = estimator
+                    self.best_mse = mse
                 return mse
             elif case == "l1":
                 weights = estimator.get_weights()
@@ -117,7 +123,7 @@ class GeneticAlgorithm:
         """Apply mutation to population, or subset passed."""
         for estimator in self.population:
             if self.hybrid:
-                estimator.fit(train_x, train_y, epochs=self.epochs)
+                estimator.fit(train_x, train_y, epochs=self.epochs, verbose=self.verbose)
             else:
                 weights = estimator.get_weights()
                 # BUG: assuming mutable
@@ -206,10 +212,15 @@ class GeneticAlgorithm:
         print(test_x.shape, test_y.shape)
         print(X.shape, y.shape)
         self.init_population()
-        for _ in range(self.generations):
+        for gen_index in range(self.generations):
+            print('Generation:', gen_index)
+            print('Best Model MSE:', self.best_mse)
             self.select(test_x, test_y)
             self.mutate(X, y)
             self.recombine()
+    
+    def predict(self, X):
+        return self.best_model.predict(X)
 
     def get_params(self, deep=False):
         """Return the params dictionary."""
@@ -246,6 +257,7 @@ class GeneticAlgorithm:
         # self.best_model = params["best_model"]
         # self.population = params["population"]
         self.best_model = None
+        self.best_mse = float('inf')
         self.population = []
         self.init_population()
 
