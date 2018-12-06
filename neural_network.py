@@ -20,6 +20,8 @@ class NeuralNetwork:
         hidden_layer_size=10,
         output_size=1, 
         learning_rate=1e-3, 
+        epochs=10,
+        verbose=0,
         weights=None
     ):
         self.input_size=input_size
@@ -29,6 +31,8 @@ class NeuralNetwork:
         self.weights=weights
         self.model=None
         self.build_neural_network()
+        self.epochs=epochs
+        self.verbose=verbose
    
     def build_neural_network(self):
         """Build single hidden layer network in Keras and return it."""
@@ -78,7 +82,7 @@ class NeuralNetwork:
         self.model = model
 
     def fit(self, train_x, train_y):
-        self.model.fit(train_x, train_y)
+        self.model.fit(train_x, train_y, epochs=self.epochs, verbose=self.verbose)
 
     def predict(self, X):
         return self.model.predict(X)
@@ -89,8 +93,8 @@ class NeuralNetwork:
             "input_size": self.input_size,
             "hidden_layer_size": self.hidden_layer_size,
             "output_size": self.output_size,
-            "learning_rate": self.learning_rate,
-            "weights": self.weights,
+            # "weights": self.weights,
+            "learning_rate": self.learning_rate
         }
         return params
 
@@ -99,4 +103,6 @@ class NeuralNetwork:
         self.hidden_layer_size=params["hidden_layer_size"]
         self.output_size=params["output_size"]
         self.learning_rate=params["learning_rate"]
-        self.weights=params["weights"]
+        # self.weights=params["weights"]
+        self.model=None
+        self.build_neural_network()

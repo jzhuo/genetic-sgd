@@ -56,17 +56,17 @@ class GeneticAlgorithm:
 
         for _ in range(self.population_size):
             self.population.append(
-                neural_network.build_nn(
+                neural_network.NeuralNetwork(
                     self.input_size,
                     self.hidden_layer_size,
                     self.output_size,
-                    self.learning_rate,
+                    self.learning_rate
                 )
-                # neural_network.build_sklearn_nn(
+                # neural_network.build_nn(
                 #     self.input_size,
                 #     self.hidden_layer_size,
                 #     self.output_size,
-                #     self.learning_rate,
+                #     self.learning_rate
                 # )
             )
 
