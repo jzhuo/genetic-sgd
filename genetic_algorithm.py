@@ -7,19 +7,18 @@ import numpy as np
 W1_INDEX = 0
 W2_INDEX = 2
 
-
 class GeneticAlgorithm:
     def __init__(
         self,
-        hybrid,
-        input_size,
-        hidden_layer_size,
-        output_size,
-        population_size,
-        selection_size,
-        learning_rate,
-        epochs,
-        generations,
+        hybrid=True,
+        input_size=2,
+        hidden_layer_size=5,
+        output_size=1,
+        population_size=6,
+        selection_size=2,
+        learning_rate=1e-3,
+        epochs=10,
+        generations=5,
         cases=["mse", "l2", "l1", "time"],
         # ****** make sure to toggle verbosity during training!! *****
         verbose=0,
@@ -132,7 +131,7 @@ class GeneticAlgorithm:
                         loc=0.0, scale=1.0, size=matrix.shape
                     )
                     matrix += noise
-                estimator.set_weights(weights)
+                estimator.set_weights(weights)            
 
     def recombine(self):
         """Recombine the passed subset of the population."""
