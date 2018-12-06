@@ -48,13 +48,13 @@ def make_ga_grid(data, hybrid):
         "verbose": [0], # ****** REMEMBER TO TOGGLE VERBOSITY ******
     }
     if hybrid is True:
-        print('\n\nTraining Hybrid GA\n\n')
+        print('\n\n***** Training Hybrid GA *****\n\n')
     else:
-        print('\n\nTraining GA\n\n')
+        print('\n\n***** Training GA *****\n\n')
     return cross_validate_on_data(estimator, param_grid, data)
 
 def make_nn_grid(data):
-    estimator = neural_network.build_nn()
+    estimator = neural_network.NeuralNetwork()
     param_grid = {
         "input_size": [calculate_input_size(data)],
         "hidden_layer_size": HIDDEN_LAYER_SIZES,
@@ -63,7 +63,7 @@ def make_nn_grid(data):
         "epochs": [150],
         "verbose": [0], # ****** REMEMBER TO TOGGLE VERBOSITY ******
     }
-    print('\n\nTraining Neural Networks\n\n')
+    print('\n\n***** Training Neural Networks *****\n\n')
     return cross_validate_on_data(estimator, param_grid, data)
 
 def split_data(data):

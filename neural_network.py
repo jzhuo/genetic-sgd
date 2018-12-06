@@ -27,6 +27,8 @@ class NeuralNetwork:
         self.output_size=output_size
         self.learning_rate=learning_rate
         self.weights=weights
+        self.model=None
+        self.build_neural_network()
    
     def build_neural_network(self):
         """Build single hidden layer network in Keras and return it."""
@@ -73,29 +75,13 @@ class NeuralNetwork:
         # plot_model(
         #     model, to_file="model.png", show_layer_names=True, show_shapes=True
         # )
-        return model
+        self.model = model
 
+    def fit(self, train_x, train_y):
+        self.model.fit(train_x, train_y)
 
-    def build_sklearn_nn(
-        self, input_size, hidden_layer_size, output_size, learning_rate, weights=None
-    ):
-        from sklearn.neural_network import MLPRegressor
-
-        model = MLPRegressor(
-            hidden_layer_sizes=(hidden_layer_size,),
-            activation="tanh",
-            solver="sgd",
-            alpha=0.0,
-            batch_size=32,
-            learning_rate="constant",
-            learning_rate_init=learning_rate,
-        )
-
-        return model
-
-    def fit():
-
-    def predict():
+    def predict(self, X):
+        return self.model.predict(X)
 
     def get_params(self, deep=False):
         """Return the params dictionary."""
@@ -104,7 +90,7 @@ class NeuralNetwork:
             "hidden_layer_size": self.hidden_layer_size,
             "output_size": self.output_size,
             "learning_rate": self.learning_rate,
-            "weights": self.weights
+            "weights": self.weights,
         }
         return params
 
