@@ -64,7 +64,11 @@ def create_and_save_data(loc, scale, shape, func_name):
 
 if __name__ == "__main__":
     # create_and_save_data(0.0, 50, (200, 5), "uball")
-    import sys
+    import sys, os
+    from subprocess import call
+
+    if not os.path.isdir("./data"):
+        call(["mkdir", "data"])
 
     # python generate_dataset.py 0.0 50 200 2 ripple
     #                            loc scale samples dim func
