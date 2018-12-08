@@ -169,7 +169,7 @@ class GeneticAlgorithm:
         new_population = []
         for weights in children:
             new_population.append(
-                neural_network.build_nn(
+                neural_network.build_neural_network(
                     self.input_size,
                     self.hidden_layer_size,
                     self.output_size,
