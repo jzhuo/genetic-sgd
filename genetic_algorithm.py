@@ -203,6 +203,7 @@ class GeneticAlgorithm:
     def recombine(self):
         """Recombine the passed subset of the population."""
         children = []
+        child_number = 0
         num_parents = len(self.population)
         for _ in range(self.population_size):
             first, second = np.random.randint(0, num_parents, 2)
@@ -231,8 +232,9 @@ class GeneticAlgorithm:
                         child_matrix.append(w_r[row])
                 child_matrix = np.array(child_matrix).T
                 child.append(child_matrix)
-            name = l_name + r_name + str(self.generation)
+            name = l_name + r_name + str(child_number)
             children.append((child, name, l_name, r_name))
+            child_number += 1
 
         new_population = []
         for weights, name, l_name, r_name in children:
