@@ -3,9 +3,40 @@ This file contains the class that provides the genetic algorithm search.
 """
 import neural_network
 import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
 
 W1_INDEX = 0
 W2_INDEX = 2
+ALPHABET = [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
+]
+ALPHABET += [a.upper() for a in ALPHABET]
 
 
 class GeneticAlgorithm:
@@ -19,7 +50,7 @@ class GeneticAlgorithm:
         selection_size=2,
         learning_rate=1e-3,
         epochs=10,
-        generations=5,
+        generations=10,
         cases=["mse", "l2", "l1", "time"],
         # ****** make sure to toggle verbosity during training!! *****
         verbose=0,
@@ -47,23 +78,64 @@ class GeneticAlgorithm:
         self.best_model = None
         self.best_mse = float("inf")
         self.population = []
+        self.graph = nx.Graph()
+        self.generation = 0
         self.init_population()
         pass
 
+    def print_graph(self, labels=False):
+        def hierarchy():
+            """
+            Reference: 
+            
+            https://stackoverflow.com/questions/29586520/can-one-get-hierarchical-graphs-from-networkx-with-python-3/29597209
+            https://networkx.github.io/documentation/latest/reference/generated/networkx.drawing.nx_pylab.draw.html#networkx.drawing.nx_pylab.draw
+            """
+            pos = {}
+            row, col, last_len = 0, 0, 1
+            max_col, max_row = 1, 1
+            for name in self.graph.nodes():
+                if len(name) > last_len:
+                    last_len = len(name)
+                    row += 1
+                    col = 0
+                x = row
+                y = col
+                pos[name] = (x, y)
+                col += 1
+                max_col = max(max_col, col)
+                max_row = max(max_row, row)
+            return pos, max_row, max_col
+
+        pos, max_row, max_col = hierarchy()
+        plt.figure(figsize=(max_row, max_col / 2))
+        nx.draw(self.graph, pos=pos, node_color="paleturquoise", edge_color="gray")
+        if labels:
+            text = nx.draw_networkx_labels(self.graph, pos)
+            for _, t in text.items():
+                t.set_rotation(25)
+        plt.savefig("family_tree.png")
+
     def init_population(self):
         """Init population of NNs according to hyper parameters."""
-
+        if self.population_size > 52:
+            raise Warning(
+                "Visualization for population sizes greater than 52 is currently unsupported."
+            )
         self.population = []
-
-        for _ in range(self.population_size):
+        for index in range(self.population_size):
+            name = ALPHABET[index]
             self.population.append(
                 neural_network.NeuralNetwork(
                     self.input_size,
                     self.hidden_layer_size,
                     self.output_size,
                     self.learning_rate,
+                    name=name,
                 )
             )
+            self.graph.add_node(name)
+        # self.print_graph()
 
     def select(self, test_x, test_y):
         """Using cases, apply lexicase selection to population."""
@@ -124,9 +196,7 @@ class GeneticAlgorithm:
                 weights = estimator.get_weights()
                 # BUG: assuming mutable
                 for matrix in weights:
-                    noise = np.random.normal(
-                        loc=0.0, scale=1.0, size=matrix.shape
-                    )
+                    noise = np.random.normal(loc=0.0, scale=1.0, size=matrix.shape)
                     matrix += noise
                 estimator.set_weights(weights)
 
@@ -136,10 +206,12 @@ class GeneticAlgorithm:
         num_parents = len(self.population)
         for _ in range(self.population_size):
             first, second = np.random.randint(0, num_parents, 2)
-            left = self.population[first]
-            right = self.population[second]
-            left = left.get_weights()
-            right = right.get_weights()
+            left_parent = self.population[first]
+            right_parent = self.population[second]
+            l_name = left_parent.name
+            r_name = right_parent.name
+            left = left_parent.get_weights()
+            right = right_parent.get_weights()
             child = []
             for matrix in range(4):  # hardcoding 1 hidden layer
                 # dealing with weight matrix
@@ -151,7 +223,6 @@ class GeneticAlgorithm:
                 split = int(np.random.uniform(0, height))
                 # randomly select rows
                 indices = np.random.choice(height, split, replace=False)
-
                 child_matrix = []
                 for row in range(height):
                     if row in indices:
@@ -160,11 +231,13 @@ class GeneticAlgorithm:
                         child_matrix.append(w_r[row])
                 child_matrix = np.array(child_matrix).T
                 child.append(child_matrix)
-
-            children.append(child)
+            name = l_name + r_name + str(self.generation)
+            children.append((child, name, l_name, r_name))
 
         new_population = []
-        for weights in children:
+        for weights, name, l_name, r_name in children:
+            # if l_name == r_name:
+            #     raise ValueError("No Cloning!")
             new_population.append(
                 neural_network.NeuralNetwork(
                     self.input_size,
@@ -172,9 +245,14 @@ class GeneticAlgorithm:
                     self.output_size,
                     self.learning_rate,
                     weights=weights,
+                    name=name,
                 )
             )
+            self.graph.add_node(name)
+            self.graph.add_edges_from([(l_name, name), (r_name, name)])
         self.population = new_population
+        self.generation += 1
+        self.print_graph(False)
 
     def fit(self, train_x, train_y):
         """Run the algorithm."""
@@ -260,6 +338,9 @@ class GeneticAlgorithm:
     def write(self):
         pass
 
+    def visualize(self):
+        pass
+
 
 if __name__ == "__main__":
     import main
@@ -269,11 +350,11 @@ if __name__ == "__main__":
     input_size = data.shape[1] - 1
     hidden_layer_size = 5
     output_size = 1
-    population_size = 6
-    selection_size = 2
+    population_size = 10
+    selection_size = 4
     learning_rate = 1e-3
     epochs = 10
-    generations = 5
+    generations = 10
     estimator = GeneticAlgorithm(
         True,
         input_size,
@@ -285,6 +366,8 @@ if __name__ == "__main__":
         epochs,
         generations,
     )
+    X, y = main.split_data(data)
+    estimator.fit(X, y)
     print(estimator)
     import pickle
 

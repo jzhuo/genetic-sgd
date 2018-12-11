@@ -7,8 +7,7 @@ There are pros and cons to wrapping sklearn and keras objects.
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Input
 from keras.initializers import constant
-from keras import initializers
-from keras import optimizers
+from keras import initializers, optimizers
 import main
 
 
@@ -22,6 +21,7 @@ class NeuralNetwork:
         epochs=10,
         verbose=0,
         weights=None,
+        name=".",
     ):
         self.input_size = input_size
         self.hidden_layer_size = hidden_layer_size
@@ -32,6 +32,7 @@ class NeuralNetwork:
         self.verbose = verbose
         self.model = None
         self.build_neural_network()
+        self.name = name
 
     def build_neural_network(self):
         """Build single hidden layer network in Keras and return it."""
@@ -63,9 +64,7 @@ class NeuralNetwork:
             minval=minval, maxval=maxval, seed=main.SEED
         )
         model.add(
-            Dense(
-                1, bias_initializer=constant(1), kernel_initializer=fan_in_init
-            )
+            Dense(1, bias_initializer=constant(1), kernel_initializer=fan_in_init)
         )
 
         optimizer = optimizers.SGD(lr=self.learning_rate)
@@ -82,10 +81,8 @@ class NeuralNetwork:
         # )
         self.model = model
 
-    def fit(self, train_x, train_y):
-        self.model.fit(
-            train_x, train_y, epochs=self.epochs, verbose=self.verbose
-        )
+    def fit(self, train_x, train_y, epochs, verbose):
+        self.model.fit(train_x, train_y, epochs, verbose)
 
     def predict(self, X):
         return self.model.predict(X)
