@@ -13,27 +13,26 @@ import main
 
 
 class NeuralNetwork:
-    
     def __init__(
         self,
         input_size=3,
         hidden_layer_size=10,
-        output_size=1, 
-        learning_rate=1e-3, 
+        output_size=1,
+        learning_rate=1e-3,
         epochs=10,
         verbose=0,
-        weights=None
+        weights=None,
     ):
-        self.input_size=input_size
-        self.hidden_layer_size=hidden_layer_size
-        self.output_size=output_size
-        self.learning_rate=learning_rate
-        self.weights=weights
-        self.model=None
+        self.input_size = input_size
+        self.hidden_layer_size = hidden_layer_size
+        self.output_size = output_size
+        self.learning_rate = learning_rate
+        self.weights = weights
+        self.epochs = epochs
+        self.verbose = verbose
+        self.model = None
         self.build_neural_network()
-        self.epochs=epochs
-        self.verbose=verbose
-   
+
     def build_neural_network(self):
         """Build single hidden layer network in Keras and return it."""
 
@@ -64,7 +63,9 @@ class NeuralNetwork:
             minval=minval, maxval=maxval, seed=main.SEED
         )
         model.add(
-            Dense(1, bias_initializer=constant(1), kernel_initializer=fan_in_init)
+            Dense(
+                1, bias_initializer=constant(1), kernel_initializer=fan_in_init
+            )
         )
 
         optimizer = optimizers.SGD(lr=self.learning_rate)
@@ -82,10 +83,18 @@ class NeuralNetwork:
         self.model = model
 
     def fit(self, train_x, train_y):
-        self.model.fit(train_x, train_y, epochs=self.epochs, verbose=self.verbose)
+        self.model.fit(
+            train_x, train_y, epochs=self.epochs, verbose=self.verbose
+        )
 
     def predict(self, X):
         return self.model.predict(X)
+
+    def get_weights(self):
+        return self.model.get_weights()
+
+    def set_weights(self, weights):
+        self.model.set_weights(weights)
 
     def get_params(self, deep=False):
         """Return the params dictionary."""
@@ -94,15 +103,15 @@ class NeuralNetwork:
             "hidden_layer_size": self.hidden_layer_size,
             "output_size": self.output_size,
             # "weights": self.weights,
-            "learning_rate": self.learning_rate
+            "learning_rate": self.learning_rate,
         }
         return params
 
     def set_params(self, **params):
-        self.input_size=params["input_size"]
-        self.hidden_layer_size=params["hidden_layer_size"]
-        self.output_size=params["output_size"]
-        self.learning_rate=params["learning_rate"]
+        self.input_size = params["input_size"]
+        self.hidden_layer_size = params["hidden_layer_size"]
+        self.output_size = params["output_size"]
+        self.learning_rate = params["learning_rate"]
         # self.weights=params["weights"]
-        self.model=None
+        self.model = None
         self.build_neural_network()

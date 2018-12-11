@@ -7,6 +7,7 @@ import numpy as np
 W1_INDEX = 0
 W2_INDEX = 2
 
+
 class GeneticAlgorithm:
     def __init__(
         self,
@@ -44,7 +45,7 @@ class GeneticAlgorithm:
         self.generations = generations
         self.verbose = verbose
         self.best_model = None
-        self.best_mse = float('inf')
+        self.best_mse = float("inf")
         self.population = []
         self.init_population()
         pass
@@ -60,14 +61,8 @@ class GeneticAlgorithm:
                     self.input_size,
                     self.hidden_layer_size,
                     self.output_size,
-                    self.learning_rate
+                    self.learning_rate,
                 )
-                # neural_network.build_nn(
-                #     self.input_size,
-                #     self.hidden_layer_size,
-                #     self.output_size,
-                #     self.learning_rate
-                # )
             )
 
     def select(self, test_x, test_y):
@@ -122,7 +117,9 @@ class GeneticAlgorithm:
         """Apply mutation to population, or subset passed."""
         for estimator in self.population:
             if self.hybrid:
-                estimator.fit(train_x, train_y, epochs=self.epochs, verbose=self.verbose)
+                estimator.fit(
+                    train_x, train_y, epochs=self.epochs, verbose=self.verbose
+                )
             else:
                 weights = estimator.get_weights()
                 # BUG: assuming mutable
@@ -131,7 +128,7 @@ class GeneticAlgorithm:
                         loc=0.0, scale=1.0, size=matrix.shape
                     )
                     matrix += noise
-                estimator.set_weights(weights)            
+                estimator.set_weights(weights)
 
     def recombine(self):
         """Recombine the passed subset of the population."""
@@ -169,7 +166,7 @@ class GeneticAlgorithm:
         new_population = []
         for weights in children:
             new_population.append(
-                neural_network.build_neural_network(
+                neural_network.NeuralNetwork(
                     self.input_size,
                     self.hidden_layer_size,
                     self.output_size,
@@ -212,12 +209,12 @@ class GeneticAlgorithm:
         print(X.shape, y.shape)
         self.init_population()
         for gen_index in range(self.generations):
-            print('Generation:', gen_index)
-            print('Best Model MSE:', self.best_mse)
+            print("Generation:", gen_index)
+            print("Best Model MSE:", self.best_mse)
             self.select(test_x, test_y)
             self.mutate(X, y)
             self.recombine()
-    
+
     def predict(self, X):
         return self.best_model.predict(X)
 
@@ -256,7 +253,7 @@ class GeneticAlgorithm:
         # self.best_model = params["best_model"]
         # self.population = params["population"]
         self.best_model = None
-        self.best_mse = float('inf')
+        self.best_mse = float("inf")
         self.population = []
         self.init_population()
 
