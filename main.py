@@ -104,6 +104,8 @@ def analyze_grids(grids, data):
     hybrid_model = grids["hybrid"].best_estimator_
     nn_model = grids["nn"].best_estimator_
     ga_model = grids["ga"].best_estimator_
+    if hybrid_model == nn_model or ga_model == hybrid_model or nn_model == ga_model:
+        raise ValueError("The best estimators aren't supposed to be the same!")
     # predict with models
     y_hybrid = hybrid_model.predict(X)
     y_nn = nn_model.predict(X)
