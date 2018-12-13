@@ -110,7 +110,7 @@ class GeneticAlgorithm:
 
         pos, max_row, max_col = hierarchy()
         plt.figure(figsize=(max_row, max_col / 2))
-        nx.draw(self.graph, pos=pos, node_color="paleturquoise", edge_color="gray")
+        nx.draw(self.graph, pos=pos, node_color="turquoise", edge_color="gray")
         if labels:
             text = nx.draw_networkx_labels(self.graph, pos)
             for _, t in text.items():
@@ -241,8 +241,8 @@ class GeneticAlgorithm:
 
         new_population = []
         for weights, name, l_name, r_name in children:
-            # if l_name == r_name:
-            #     raise ValueError("No Cloning!")
+            if l_name == r_name:
+                raise ValueError("No Cloning!")
             new_population.append(
                 neural_network.NeuralNetwork(
                     self.input_size,
@@ -273,7 +273,6 @@ class GeneticAlgorithm:
         #         while run < generation limit
         #     return best saved
         height = train_x.shape[0]
-        print(height)
         split = int(np.ceil(height / 5))
         indices = np.random.choice(height, split, replace=False)
         test_x, test_y, X, y = [], [], [], []
@@ -290,12 +289,10 @@ class GeneticAlgorithm:
             np.array(X),
             np.array(y),
         )
-        print(test_x.shape, test_y.shape)
-        print(X.shape, y.shape)
         self.init_population()
         for gen_index in range(self.generations):
-            print("Generation:", gen_index)
-            print("Best Model MSE:", self.best_mse)
+            print("\tGeneration:", gen_index)
+            print("\tBest Model MSE:", self.best_mse)
             self.select(test_x, test_y)
             self.mutate(X, y)
             self.recombine()
@@ -342,6 +339,7 @@ class GeneticAlgorithm:
         self.best_mse = float("inf")
         self.population = []
         self.init_population()
+        return self
 
     def write(self):
         pass
