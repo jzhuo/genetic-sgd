@@ -299,6 +299,7 @@ class GeneticAlgorithm:
             self.select(test_x, test_y)
             self.mutate(X, y)
             self.recombine()
+        return self
 
     def predict(self, X):
         return self.best_model.predict(X)

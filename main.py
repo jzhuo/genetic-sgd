@@ -14,8 +14,8 @@ from sklearn.metrics import mean_squared_error
 
 SEED = 42
 OUTPUT_SIZE = [1]
-HIDDEN_LAYER_SIZES = [5, 10, 25, 50, 100, 250]
-LEARNING_RATES = [1e-2, 1e-3, 1e-4]
+HIDDEN_LAYER_SIZES = [5, 25]  # , 10, 25, 50, 100, 250]
+LEARNING_RATES = [1e-3]
 
 
 def load_dataset(name):
@@ -31,6 +31,22 @@ def plot_comparison():
     import matplotlib.pyplot as plt
 
     pass
+
+
+def cross_validate_on_data(estimator, param_grid, data):
+    from sklearn.model_selection import GridSearchCV
+
+    grid = GridSearchCV(
+        estimator,
+        param_grid,
+        scoring="neg_mean_squared_error",
+        cv=3,
+        n_jobs=1,
+        verbose=4,
+    )
+    X, y = split_data(data)
+    grid.fit(X, y)
+    return grid
 
 
 def make_ga_grid(data, hybrid):
@@ -79,19 +95,10 @@ def split_data(data):
     return X, y
 
 
-def cross_validate_on_data(estimator, param_grid, data):
-    from sklearn.model_selection import GridSearchCV
-
-    grid = GridSearchCV(
-        estimator, param_grid, scoring="neg_mean_squared_error", cv=3, n_jobs=1
-    )
-    X, y = split_data(data)
-    grid.fit(X, y)
-    return grid
-
-
 def analyze_grids(grids, data):
     X, y = split_data(data)
+    print("X.shape", X.shape)
+    print("y.shape", y.shape)
     # extract best models for each grid
     hybrid_model = grids["hybrid"].best_estimator_
     nn_model = grids["nn"].best_estimator_

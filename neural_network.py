@@ -83,6 +83,7 @@ class NeuralNetwork:
 
     def fit(self, train_x, train_y):
         self.model.fit(train_x, train_y, self.epochs, self.verbose)
+        return self
 
     def predict(self, X):
         return self.model.predict(X)
@@ -112,3 +113,4 @@ class NeuralNetwork:
         # self.weights=params["weights"]
         self.model = None
         self.build_neural_network()
+        return self
