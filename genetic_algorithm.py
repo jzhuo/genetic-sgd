@@ -132,7 +132,9 @@ class GeneticAlgorithm:
                     self.hidden_layer_size,
                     self.output_size,
                     self.learning_rate,
+                    epochs=self.epochs,
                     name=name,
+                    verbose=self.verbose,
                 )
             )
             self.graph.add_node(name)
@@ -190,9 +192,7 @@ class GeneticAlgorithm:
         """Apply mutation to population, or subset passed."""
         for estimator in self.population:  # for each selected estimator
             if self.hybrid:  # hybrid GA
-                estimator.fit(
-                    train_x, train_y, epochs=self.epochs, verbose=self.verbose
-                )  # SGD
+                estimator.fit(train_x, train_y)  # SGD
             else:  # normal GA
                 weights = estimator.get_weights()
                 # BUG: assuming mutable
@@ -250,7 +250,9 @@ class GeneticAlgorithm:
                     self.output_size,
                     self.learning_rate,
                     weights=weights,
+                    epochs=self.epochs,
                     name=name,
+                    verbose=self.verbose,
                 )
             )
             self.graph.add_node(name)

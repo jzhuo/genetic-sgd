@@ -81,8 +81,8 @@ class NeuralNetwork:
         # )
         self.model = model
 
-    def fit(self, train_x, train_y, epochs, verbose):
-        self.model.fit(train_x, train_y, epochs, verbose)
+    def fit(self, train_x, train_y):
+        self.model.fit(train_x, train_y, self.epochs, self.verbose)
 
     def predict(self, X):
         return self.model.predict(X)
