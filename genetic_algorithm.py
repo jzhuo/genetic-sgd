@@ -151,7 +151,7 @@ class GeneticAlgorithm:
                 # compute a diff with test_y and y_hat
                 mse = np.mean((test_y - y_hat) ** 2)
                 # updating best model
-                if mse < self.best_mse:
+                if mse <= self.best_mse:
                     self.best_model = estimator
                     self.best_mse = mse
                 return mse
@@ -187,6 +187,7 @@ class GeneticAlgorithm:
             selected.append(case_bests[random_pick])
         self.population = selected
         # now recombine
+        
 
     def mutate(self, train_x, train_y):
         """Apply mutation to population, or subset passed."""
@@ -198,7 +199,9 @@ class GeneticAlgorithm:
                 # BUG: assuming mutable
                 for matrix in weights:
                     noise = np.random.normal(
-                        loc=0.0, scale=self.scale_of_mutation, size=matrix.shape
+                        loc=0.0,
+                        scale=self.scale_of_mutation,
+                        size=matrix.shape,
                     )
                     matrix += noise
                 estimator.set_weights(weights)
@@ -292,7 +295,7 @@ class GeneticAlgorithm:
         self.init_population()
         for gen_index in range(self.generations):
             print("\tGeneration:", gen_index)
-            print("\tBest Model MSE:", self.best_mse)
+            print("\tBest Model MSE:", self.best_mse, self.best_model)
             self.select(test_x, test_y)
             self.mutate(X, y)
             self.recombine()
