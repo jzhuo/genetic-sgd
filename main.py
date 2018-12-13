@@ -6,7 +6,7 @@ It should contain functions that
 * Initialize the genetic algorithm and its population
 * Train on the dataset
 """
-
+import numpy as np
 import pandas as pd
 import genetic_algorithm
 import neural_network
@@ -16,6 +16,8 @@ SEED = 42
 OUTPUT_SIZE = [1]
 HIDDEN_LAYER_SIZES = [5, 25]  # , 10, 25, 50, 100, 250]
 LEARNING_RATES = [1e-3]
+
+np.random.seed(SEED)
 
 
 def load_dataset(name):
@@ -49,30 +51,6 @@ def cross_validate_on_data(estimator, param_grid, data):
     return grid
 
 
-def make_ga_grid(data, hybrid):
-
-    # init ga
-    estimator = genetic_algorithm.GeneticAlgorithm()
-    param_grid = {
-        "hybrid": [hybrid],
-        "input_size": [data.shape[1] - 1],
-        "hidden_layer_size": HIDDEN_LAYER_SIZES,
-        "output_size": OUTPUT_SIZE,
-        "population_size": [30],
-        "selection_size": [6],
-        "learning_rate": LEARNING_RATES,
-        "epochs": [10],
-        "generations": [50],
-        "cases": [["mse", "l2", "l1", "time"]],
-        "verbose": [0],  # ****** REMEMBER TO TOGGLE VERBOSITY ******
-    }
-    if hybrid is True:
-        print("\n\n***** Training Hybrid GA *****\n\n")
-    else:
-        print("\n\n***** Training GA *****\n\n")
-    return cross_validate_on_data(estimator, param_grid, data)
-
-
 def make_nn_grid(data):
     estimator = neural_network.NeuralNetwork()
     param_grid = {
@@ -80,10 +58,33 @@ def make_nn_grid(data):
         "hidden_layer_size": HIDDEN_LAYER_SIZES,
         "output_size": OUTPUT_SIZE,
         "learning_rate": LEARNING_RATES,
-        "epochs": [150],
+        "epochs": [10],
         "verbose": [0],  # ****** REMEMBER TO TOGGLE VERBOSITY ******
     }
     print("\n\n***** Training Neural Networks *****\n\n")
+    return cross_validate_on_data(estimator, param_grid, data)
+
+
+def make_ga_grid(data, hybrid):
+    # init ga
+    estimator = genetic_algorithm.GeneticAlgorithm()
+    param_grid = {
+        "hybrid": [hybrid],
+        "input_size": [data.shape[1] - 1],
+        "hidden_layer_size": HIDDEN_LAYER_SIZES,
+        "output_size": OUTPUT_SIZE,
+        "population_size": [5],
+        "selection_size": [3],
+        "learning_rate": LEARNING_RATES,
+        "epochs": [5],
+        "generations": [2],
+        "cases": [["mse", "l2", "l1"]],
+        "verbose": [0],  # ****** REMEMBER TO TOGGLE VERBOSITY ******
+    }
+    if hybrid is True:
+        print("\n\n***** Training Hybrid GA *****\n\n")
+    else:
+        print("\n\n***** Training GA *****\n\n")
     return cross_validate_on_data(estimator, param_grid, data)
 
 
@@ -128,8 +129,4 @@ if __name__ == "__main__":
         "hybrid": make_ga_grid(train, True),
         "ga": make_ga_grid(train, False),
     }
-
     analyze_grids(grids, test)
-
-    # pass to cross validate
-    # pass
