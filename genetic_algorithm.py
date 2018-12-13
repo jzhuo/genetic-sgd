@@ -74,6 +74,7 @@ class GeneticAlgorithm:
         self.cases = cases
         self.epochs = epochs
         self.generations = generations
+        self.scale_of_mutation = 1.0  # future work
         self.verbose = verbose
         self.best_model = None
         self.best_mse = float("inf")
@@ -187,16 +188,18 @@ class GeneticAlgorithm:
 
     def mutate(self, train_x, train_y):
         """Apply mutation to population, or subset passed."""
-        for estimator in self.population:
-            if self.hybrid:
+        for estimator in self.population:  # for each selected estimator
+            if self.hybrid:  # hybrid GA
                 estimator.fit(
                     train_x, train_y, epochs=self.epochs, verbose=self.verbose
-                )
-            else:
+                )  # SGD
+            else:  # normal GA
                 weights = estimator.get_weights()
                 # BUG: assuming mutable
                 for matrix in weights:
-                    noise = np.random.normal(loc=0.0, scale=1.0, size=matrix.shape)
+                    noise = np.random.normal(
+                        loc=0.0, scale=self.scale_of_mutation, size=matrix.shape
+                    )
                     matrix += noise
                 estimator.set_weights(weights)
 
@@ -206,7 +209,7 @@ class GeneticAlgorithm:
         child_number = 0
         num_parents = len(self.population)
         for _ in range(self.population_size):
-            first, second = np.random.randint(0, num_parents, 2)
+            first, second = np.random.choice(num_parents, 2, replace=False)
             left_parent = self.population[first]
             right_parent = self.population[second]
             l_name = left_parent.name
