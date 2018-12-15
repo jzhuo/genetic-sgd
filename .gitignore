@@ -1,3 +1,5 @@
 data/*
 .vscode/settings.json
 .vscode
+test
+*.pyc
